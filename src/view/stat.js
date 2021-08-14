@@ -1,5 +1,6 @@
 // Статистика сайта.
+// Добавляем данные.
 
-export function createStatTemplate() {
-  return ('<p>130 291 movies inside</p>');
+export function createStatTemplate(parameter) {
+  return (`<p>${parameter.length} movies inside</p>`);
 }
