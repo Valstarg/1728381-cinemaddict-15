@@ -18,8 +18,6 @@ import {filmData} from './mock/film-data.js';
 const FILMS_COUNT = 5;
 const EXTRA_FILMS_COUNT = 2;
 const FILMS_COUNT_STEP = 5;
-const RATED_COUNT = 8;
-
 
 // Функция отрисовки элементов.
 
@@ -85,7 +83,6 @@ for (let i = 0; i < EXTRA_FILMS_COUNT; i++) {
 const filmsExtra = document.querySelector('.films');
 const filmsListExtra = filmsExtra.querySelectorAll('.films-list--extra');
 const ratedFilms = filmData
-  .filter((card) => card.filmInfo.totalRating > RATED_COUNT)
   .sort((a, b) => (b.filmInfo.totalRating > a.filmInfo.totalRating) ? 1 : -1)
   .slice(0, 2);
 ratedFilms.forEach((card) => {
