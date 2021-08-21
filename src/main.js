@@ -2,15 +2,16 @@
 
 // Импорты.
 
-import {createProfileTemplate} from './view/profile.js';
-import {createNavigationTemplate} from './view/navigation.js';
-import {createSortTemplate} from './view/sort.js';
-import {createFilmListTemplate} from './view/films.js';
-import {createFilmCardTemplate} from './view/film-card.js';
-import {createFilmListExtraTemplate} from './view/films-extra.js';
-import {createShowMoreTemplate} from './view/show-more-button.js';
-import {createStatTemplate} from './view/stat.js';
-import {createPopupTemplate} from './view/popup.js';
+import profileView from './view/profile.js';
+import navigationView from './view/navigation.js';
+import sortView from './view/sort.js';
+import filmListView from './view/films.js';
+import filmCardView from './view/film-card.js';
+import filmListExtraView from './view/films-extra.js';
+import showMoreView from './view/show-more-button.js';
+import statView from './view/stat.js';
+import popupView from './view/popup.js';
+import filmNoCardView from './view/no-films.js';
 import {filmData} from './mock/film-data.js';
 
 // Магические числа.
@@ -19,101 +20,145 @@ const FILMS_COUNT = 5;
 const EXTRA_FILMS_COUNT = 2;
 const FILMS_COUNT_STEP = 5;
 
-// Функция отрисовки элементов.
-
-function render(container, template, place) {
-  return container.insertAdjacentHTML(place, template);
-}
-
-// Переменные разметки и отрисовка элементов.
+// Переменные разметки.
 
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
-render(header, createProfileTemplate(), 'beforeend');
-render(main, createNavigationTemplate(filmData), 'beforeend');
-
-// Кнопки навигации.
-
-const navigationItem = document.querySelectorAll('.main-navigation__item');
-navigationItem.forEach((link) => {
-  link.addEventListener('click', () => {
-    navigationItem.forEach(((button) => {
-      button.classList.remove('main-navigation__item--active');
-    }));
-    link.classList.add('main-navigation__item--active');
-  });
-});
-render(main, createSortTemplate(), 'beforeend');
-render(main, createFilmListTemplate(), 'beforeend');
-
-// Отрисовка карточек фильмов.
-
-const filmsListContainer = document.querySelector('.films-list__container');
-for (let i = 0; i < Math.min(filmData.length, FILMS_COUNT); i++) {
-  render(filmsListContainer, createFilmCardTemplate(filmData[i]), 'beforeend');
-}
-
-// ShowMore. Отрисовка новых карточек фильмов.
-
-const filmsList = document.querySelector('.films-list');
-if (filmData.length > FILMS_COUNT_STEP) {
-  let renderedCount = FILMS_COUNT_STEP;
-  render(filmsList, createShowMoreTemplate(), 'beforeend');
-  const showMoreButton = document.querySelector('.films-list__show-more');
-  showMoreButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    filmData.slice(renderedCount, renderedCount + FILMS_COUNT_STEP)
-      .forEach((card) => {
-        render(filmsListContainer, createFilmCardTemplate(card), 'beforeend');
-      });
-    renderedCount += FILMS_COUNT_STEP;
-    if (renderedCount >= filmData.length) {
-      showMoreButton.remove();
-    }
-  });
-}
-
-// Блок экстра.
-
-const titleExtra = [{ title: 'Top rated' }, { title: 'Most commented' }];
-const films = document.querySelector('.films');
-for (let i = 0; i < EXTRA_FILMS_COUNT; i++) {
-  render(films, createFilmListExtraTemplate(titleExtra[i]), 'beforeend');
-}
-const filmsExtra = document.querySelector('.films');
-const filmsListExtra = filmsExtra.querySelectorAll('.films-list--extra');
-const ratedFilms = filmData
-  .sort((a, b) => (b.filmInfo.totalRating > a.filmInfo.totalRating) ? 1 : -1)
-  .slice(0, 2);
-ratedFilms.forEach((card) => {
-  const ratedFilmsListContainer = filmsListExtra[0].querySelector('.films-list__container');
-  render(ratedFilmsListContainer, createFilmCardTemplate(card), 'beforeend');
-});
-const mostComments = filmData
-  .slice()
-  .sort((a, b) => b.comments.length - a.comments.length)
-  .slice(0, 2);
-mostComments.forEach((card) => {
-  const mostCommentsFilmListContainer = filmsListExtra[1].querySelector('.films-list__container');
-  render(mostCommentsFilmListContainer, createFilmCardTemplate(card), 'beforeend');
-});
-
-// Вызов попап окна.
-
 const footer = document.querySelector('.footer');
-const commentsElement = document.querySelectorAll('.film-card__comments');
-commentsElement.forEach((link, i) => {
-  link.addEventListener('click', () => {
-    render(footer, createPopupTemplate(filmData[i]), 'afterend');
-    const popupCloseButton = document.querySelector('.film-details__close-btn');
-    const popupFilmDetails = document.querySelector('.film-details');
-    popupCloseButton.addEventListener('click', () => {
-      popupFilmDetails.remove();
-    });
+
+// Отрисовка элементов.
+
+header.appendChild(new profileView().getElement());
+main.appendChild(new sortView().getElement());
+
+// Навигация.
+
+const mainFilters = {
+  Favorites: 'favorite',
+  History: 'history',
+  Watchlist: 'watchlist',
+};
+
+function generateFilter(item) {
+  return Object.entries(mainFilters).map(([filterName, count]) => ({
+    name: filterName,
+    count: item.filter((task) => task.userDetails[count]).length,
+  }),
+  );
+}
+
+const filters = generateFilter(filmData);
+main.appendChild(new navigationView(filters).getElement());
+
+// Окно попап(открытие, закрытие, клавиша ESC).
+
+function renderFilmCard(container, data) {
+  const filmComponent = new filmCardView(data);
+  const popupComponent = new popupView(data);
+
+  function pressEsc(evt) {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      document.querySelector('.film-details').remove();
+      document.removeEventListener('keydown', pressEsc);
+      document.querySelector('body').classList.remove('hide-overflow');
+    }
+  }
+
+  function openPopup() {
+    if (document.querySelector('.film-details')) {
+      document.querySelector('.film-details').remove();
+    }
+    footer.appendChild(popupComponent.getElement());
+    document.querySelector('body').classList.add('hide-overflow');
+    document.addEventListener('keydown', pressEsc);
+  }
+
+  const film = filmComponent.getElement();
+
+  film.querySelector('.film-card__poster').addEventListener('click', () => {
+    openPopup();
   });
-});
+
+  film.querySelector('.film-card__comments').addEventListener('click', () => {
+    openPopup();
+  });
+
+  film.querySelector('.film-card__title').addEventListener('click', () => {
+    openPopup();
+  });
+
+  popupComponent.getElement().querySelector('.film-details__close-btn').addEventListener('click', () => {
+    document.querySelector('.film-details').remove();
+    document.removeEventListener('keydown', pressEsc);
+    document.querySelector('body').classList.remove('hide-overflow');
+  });
+
+  container.appendChild(filmComponent.getElement());
+}
+
+// Карточки фильфов и раздел экстра.
+
+const renderFilmsList = (listContainer, data) => {
+  listContainer.appendChild(new filmListView().getElement());
+  const films = document.querySelector('.films');
+  const filmsList = document.querySelector('.films-list');
+  const filmsListContainer = document.querySelector('.films-list__container');
+
+  if (data.length === 0) {
+    filmsList.appendChild(new filmNoCardView().getElement());
+    return;
+  }
+
+  for (let i = 0; i < Math.min(data.length, FILMS_COUNT); i++) {
+    renderFilmCard(filmsListContainer, data[i]);
+  }
+
+  const titleExtra = [{ title: 'Top rated' }, { title: 'Most commented' }];
+  for (let i = 0; i < EXTRA_FILMS_COUNT; i++) {
+    films.appendChild(new filmListExtraView(titleExtra[i]).getElement());
+  }
+
+  const filmsListExtra = document.querySelectorAll('.films-list--extra');
+  const ratedFilms = data
+    .sort((a, b) => (b.filmInfo.totalRating > a.filmInfo.totalRating) ? 1 : -1)
+    .slice(0, EXTRA_FILMS_COUNT);
+  ratedFilms.forEach((card) => {
+    const ratedFilmsListContainer = filmsListExtra[0].querySelector('.films-list__container');
+    renderFilmCard(ratedFilmsListContainer, card);
+  });
+
+  const mostComments = data
+    .slice()
+    .sort((a, b) => b.comments.length - a.comments.length)
+    .slice(0, EXTRA_FILMS_COUNT);
+  mostComments.forEach((card) => {
+    const mostCommentsFilmListContainer = filmsListExtra[1].querySelector('.films-list__container');
+    renderFilmCard(mostCommentsFilmListContainer, card);
+  });
+
+  if (data.length > FILMS_COUNT_STEP) {
+    let renderCount = FILMS_COUNT_STEP;
+    filmsList.appendChild(new showMoreView().getElement());
+    const showMoreButton = document.querySelector('.films-list__show-more');
+
+    showMoreButton.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      data.slice(renderCount, renderCount + FILMS_COUNT_STEP)
+        .forEach((card) => {
+          renderFilmCard(filmsListContainer, card);
+        });
+      renderCount += FILMS_COUNT_STEP;
+
+      if (renderCount >= filmData.length) {
+        showMoreButton.remove();
+      }
+    });
+  }
+};
+
+renderFilmsList(main, filmData);
 
 // Статистика сайта.
 
 const footerStat = document.querySelector('.footer__statistics');
-render(footerStat, createStatTemplate(filmData), 'beforeend');
+footerStat.appendChild(new statView(filmData).getElement());
