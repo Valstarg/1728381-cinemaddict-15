@@ -2,16 +2,16 @@
 
 // Импорты.
 
-import profileView from './view/profile.js';
-import navigationView from './view/navigation.js';
-import sortView from './view/sort.js';
-import filmListView from './view/films.js';
-import filmCardView from './view/film-card.js';
-import filmListExtraView from './view/films-extra.js';
-import showMoreView from './view/show-more-button.js';
-import statView from './view/stat.js';
-import popupView from './view/popup.js';
-import filmNoCardView from './view/no-films.js';
+import ProfileTemplateView from './view/profile.js';
+import NavigationTemplateView from './view/navigation.js';
+import SortTemplateView from './view/sort.js';
+import FilmListTemplateView from './view/films.js';
+import FilmCardTemplateView from './view/film-card.js';
+import FilmListExtraTemplateView from './view/films-extra.js';
+import ShowMoreTemplateView from './view/show-more-button.js';
+import StatTemplateView from './view/stat.js';
+import PopupTemplateView from './view/popup.js';
+import NoFilmsTemplateView from './view/no-films.js';
 import {filmData} from './mock/film-data.js';
 
 // Магические числа.
@@ -24,11 +24,12 @@ const FILMS_COUNT_STEP = 5;
 
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
+//const footer = document.querySelector('.footer');
 
 // Отрисовка элементов.
 
-header.appendChild(new profileView().getElement());
-main.appendChild(new sortView().getElement());
+header.appendChild(new ProfileTemplateView().getElement());
+main.appendChild(new SortTemplateView().getElement());
 
 // Навигация.
 
@@ -47,64 +48,42 @@ function generateFilter(item) {
 }
 
 const filters = generateFilter(filmData);
-main.appendChild(new navigationView(filters).getElement());
+main.appendChild(new NavigationTemplateView(filters).getElement());
 
-// Окно попап(открытие, закрытие, клавиша ESC).
+// Окно попап(открытие, закрытие, клавиша ESC). Переписал обработчик.
 
 function renderFilmCard(container, data) {
-  const filmComponent = new filmCardView(data);
-  const popupComponent = new popupView(data);
-
-  function pressEsc(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      document.querySelector('.film-details').remove();
-      document.removeEventListener('keydown', pressEsc);
-      document.body.classList.remove('hide-overflow');
-    }
-  }
+  const filmComponent = new FilmCardTemplateView(data);
+  const popupComponent = new PopupTemplateView(data);
 
   function openPopup() {
     if (document.querySelector('.film-details')) {
       document.querySelector('.film-details').remove();
     }
-    document.body.appendChild(popupComponent.getElement());
-    document.body.classList.add('hide-overflow');
-    document.addEventListener('keydown', pressEsc);
+    document.querySelector('body').after(popupComponent.getElement());
   }
 
-  const film = filmComponent.getElement();
+  function closePopup() {
+    if (document.querySelector('.film-details')) {
+      document.querySelector('.film-details').remove();
+    }
+  }
 
-  film.querySelector('.film-card__poster').addEventListener('click', () => {
-    openPopup();
-  });
-
-  film.querySelector('.film-card__comments').addEventListener('click', () => {
-    openPopup();
-  });
-
-  film.querySelector('.film-card__title').addEventListener('click', () => {
-    openPopup();
-  });
-
-  popupComponent.getElement().querySelector('.film-details__close-btn').addEventListener('click', () => {
-    document.querySelector('.film-details').remove();
-    document.removeEventListener('keydown', pressEsc);
-    document.body.classList.remove('hide-overflow');
-  });
-
+  filmComponent.setOpenClickHandler(() => openPopup());
+  popupComponent.setCloseClickHandler(() => closePopup());
   container.appendChild(filmComponent.getElement());
 }
 
 // Карточки фильфов и раздел экстра.
 
 function renderFilmsList(listContainer, data) {
-  listContainer.appendChild(new filmListView().getElement());
+  listContainer.appendChild(new FilmListTemplateView().getElement());
   const films = document.querySelector('.films');
   const filmsList = document.querySelector('.films-list');
   const filmsListContainer = document.querySelector('.films-list__container');
 
   if (data.length === 0) {
-    filmsList.appendChild(new filmNoCardView().getElement());
+    filmsList.appendChild(new NoFilmsTemplateView().getElement());
     return;
   }
 
@@ -113,17 +92,15 @@ function renderFilmsList(listContainer, data) {
   }
 
   const titleExtra = [{ title: 'Top rated' }, { title: 'Most commented' }];
-
   const [ratedFilmsListContainer, mostCommentsFilmListContainer] = Array(EXTRA_FILMS_COUNT)
     .fill(null)
-    .map((_, index) => new filmListExtraView(titleExtra[index]).getElement());
+    .map((_, index) => new FilmListExtraTemplateView(titleExtra[index]).getElement());
   films.append(ratedFilmsListContainer, mostCommentsFilmListContainer);
 
   const ratedFilms = data
     .sort((a, b) => (b.filmInfo.totalRating > a.filmInfo.totalRating) ? 1 : -1)
     .slice(0, EXTRA_FILMS_COUNT);
   ratedFilms.forEach((card) => {
-
     renderFilmCard(ratedFilmsListContainer, card);
   });
 
@@ -132,15 +109,13 @@ function renderFilmsList(listContainer, data) {
     .sort((a, b) => b.comments.length - a.comments.length)
     .slice(0, EXTRA_FILMS_COUNT);
   mostComments.forEach((card) => {
-
     renderFilmCard(mostCommentsFilmListContainer, card);
   });
 
   if (data.length > FILMS_COUNT_STEP) {
     let renderCount = FILMS_COUNT_STEP;
-    filmsList.appendChild(new showMoreView().getElement());
+    filmsList.appendChild(new ShowMoreTemplateView().getElement());
     const showMoreButton = document.querySelector('.films-list__show-more');
-
     showMoreButton.addEventListener('click', (evt) => {
       evt.preventDefault();
       data.slice(renderCount, renderCount + FILMS_COUNT_STEP)
@@ -161,4 +136,4 @@ renderFilmsList(main, filmData);
 // Статистика сайта.
 
 const footerStat = document.querySelector('.footer__statistics');
-footerStat.appendChild(new statView(filmData).getElement());
+footerStat.appendChild(new StatTemplateView(filmData).getElement());

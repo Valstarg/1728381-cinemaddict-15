@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import {createTemplate} from '../utils/util.js';
+import AbstractionView from './abstraction.js';
 
 // Отрисовка статистики. Добавляем данные.
 
@@ -10,26 +10,15 @@ function createStatTemplate(parameter) {
   return (`<p>${parameter.length} movies inside</p>`);
 }
 
-// Создание класса.
+// Создание класса. Абстракция и наследование.
 
-export default class Stat {
+export default class StatTemplate extends AbstractionView {
   constructor(parameter) {
+    super();
     this._parameter = parameter;
-    this._element = null;
   }
 
   getTemplate() {
     return createStatTemplate(this._parameter);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createTemplate(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

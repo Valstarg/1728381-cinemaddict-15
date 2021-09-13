@@ -1,7 +1,8 @@
 // Импорты.
 
 import * as dayjs from 'dayjs';
-import {getFirstArrayElement, getCardClass, getSliceText, createTemplate} from '../utils/util.js';
+import {getFirstArrayElement, getCardClass, getSliceText} from '../utils/util.js';
+import AbstractionView from './abstraction.js';
 
 // Карточка фильма.
 
@@ -34,26 +35,31 @@ function createFilmCardTemplate(parameter) {
            </article>`;
 }
 
-// Создание класса.
+// Создание класса. Абстракция и наследование. Добавил обработчик.
 
-export default class FilmCard {
+export default class FilmCardTemplate extends AbstractionView {
   constructor(parameter) {
+    super();
     this._parameter = parameter;
-    this._element = null;
+    this._getOpenClickHandler = this._getOpenClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._parameter);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createTemplate(this.getTemplate());
-    }
-    return this._element;
+  _getOpenClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.openPopupFilm();
+    document.querySelector('body').classList.add('hide-overflow');
   }
 
-  removeElement() {
-    this._element = null;
+  setOpenClickHandler(callback) {
+    this._callback.openPopupFilm = callback;
+
+    const filmCard = this.getElement();
+    filmCard.querySelector('.film-card__poster').addEventListener('click', this._getOpenClickHandler);
+    filmCard.querySelector('.film-card__comments').addEventListener('click', this._getOpenClickHandler);
+    filmCard.querySelector('.film-card__title').addEventListener('click', this._getOpenClickHandler);
   }
 }

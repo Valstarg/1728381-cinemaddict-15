@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import {createTemplate} from '../utils/util.js';
+import AbstractionView from './abstraction.js';
 
 // Отрисовка аватара.
 
@@ -13,25 +13,10 @@ function createProfileTemplate() {
            </section>`);
 }
 
-// Создание класса.
+// Создание класса. Абстракция и наследование.
 
-export default class Profile {
-  constructor() {
-    this._element = null;
-  }
-
+export default class ProfileTemplate extends AbstractionView {
   getTemplate() {
     return createProfileTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createTemplate(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
