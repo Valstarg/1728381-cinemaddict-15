@@ -12,7 +12,7 @@ function createStatTemplate(parameter) {
 
 // Создание класса.
 
-export default class stat {
+export default class Stat {
   constructor(parameter) {
     this._parameter = parameter;
     this._element = null;

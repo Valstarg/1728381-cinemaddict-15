@@ -17,7 +17,7 @@ function createFilmListTemplate() {
 
 // Создание класса.
 
-export default class filmList {
+export default class FilmList {
   constructor() {
     this._element = null;
   }

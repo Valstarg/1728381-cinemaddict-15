@@ -77,6 +77,7 @@ function generateComment() {
 }
 
 // Остальные данные.
+
 // ID
 
 function getId() {

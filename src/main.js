@@ -24,7 +24,6 @@ const FILMS_COUNT_STEP = 5;
 
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
-const footer = document.querySelector('.footer');
 
 // Отрисовка элементов.
 
@@ -60,7 +59,7 @@ function renderFilmCard(container, data) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       document.querySelector('.film-details').remove();
       document.removeEventListener('keydown', pressEsc);
-      document.querySelector('body').classList.remove('hide-overflow');
+      document.body.classList.remove('hide-overflow');
     }
   }
 
@@ -68,8 +67,8 @@ function renderFilmCard(container, data) {
     if (document.querySelector('.film-details')) {
       document.querySelector('.film-details').remove();
     }
-    footer.appendChild(popupComponent.getElement());
-    document.querySelector('body').classList.add('hide-overflow');
+    document.body.appendChild(popupComponent.getElement());
+    document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', pressEsc);
   }
 
@@ -90,7 +89,7 @@ function renderFilmCard(container, data) {
   popupComponent.getElement().querySelector('.film-details__close-btn').addEventListener('click', () => {
     document.querySelector('.film-details').remove();
     document.removeEventListener('keydown', pressEsc);
-    document.querySelector('body').classList.remove('hide-overflow');
+    document.body.classList.remove('hide-overflow');
   });
 
   container.appendChild(filmComponent.getElement());
@@ -98,7 +97,7 @@ function renderFilmCard(container, data) {
 
 // Карточки фильфов и раздел экстра.
 
-const renderFilmsList = (listContainer, data) => {
+function renderFilmsList(listContainer, data) {
   listContainer.appendChild(new filmListView().getElement());
   const films = document.querySelector('.films');
   const filmsList = document.querySelector('.films-list');
@@ -114,16 +113,31 @@ const renderFilmsList = (listContainer, data) => {
   }
 
   const titleExtra = [{ title: 'Top rated' }, { title: 'Most commented' }];
-  for (let i = 0; i < EXTRA_FILMS_COUNT; i++) {
-    films.appendChild(new filmListExtraView(titleExtra[i]).getElement());
-  }
 
-  const filmsListExtra = document.querySelectorAll('.films-list--extra');
+  /*for (let i = 0; i < EXTRA_FILMS_COUNT; i++) {
+    films.appendChild(new filmListExtraView(titleExtra[i]).getElement());
+  }*/
+
+  // Заменил выбор по селектору и убрал цикл.
+  // Вроде всё сделал правильно. Теперь не могу понять почему не рендерятся карточки блоков "Самые популярные" и "Самые комментируемые".
+  // Как будто теряется какое-то значение в процессе отрисовки. Я понимаю, что что-то упускаю, но не понимаю что.
+  // Вот на этом я и споткнулся перед командировкой.
+  // Уже голову сломмал.
+
+  const [ratedFilmsListContainer, mostCommentsFilmListContainer] = Array(EXTRA_FILMS_COUNT)
+    .fill(null)
+    .map((_, index) => new filmListExtraView(titleExtra[index]).getElement());
+  films.append(ratedFilmsListContainer, mostCommentsFilmListContainer);
+
+  //const filmsListExtra = document.querySelectorAll('.films-list--extra');
+
   const ratedFilms = data
     .sort((a, b) => (b.filmInfo.totalRating > a.filmInfo.totalRating) ? 1 : -1)
     .slice(0, EXTRA_FILMS_COUNT);
   ratedFilms.forEach((card) => {
-    const ratedFilmsListContainer = filmsListExtra[0].querySelector('.films-list__container');
+
+    //const ratedFilmsListContainer = filmsListExtra[0].querySelector('.films-list__container');
+
     renderFilmCard(ratedFilmsListContainer, card);
   });
 
@@ -132,7 +146,9 @@ const renderFilmsList = (listContainer, data) => {
     .sort((a, b) => b.comments.length - a.comments.length)
     .slice(0, EXTRA_FILMS_COUNT);
   mostComments.forEach((card) => {
-    const mostCommentsFilmListContainer = filmsListExtra[1].querySelector('.films-list__container');
+
+    //const mostCommentsFilmListContainer = filmsListExtra[1].querySelector('.films-list__container');
+
     renderFilmCard(mostCommentsFilmListContainer, card);
   });
 
@@ -154,7 +170,7 @@ const renderFilmsList = (listContainer, data) => {
       }
     });
   }
-};
+}
 
 renderFilmsList(main, filmData);
 

@@ -32,7 +32,7 @@ function createNavigationTemplate(filterItems) {
 
 // Создание класса.
 
-export default class navigation {
+export default class Navigation {
   constructor(filters) {
     this._filters = filters;
     this._element = null;

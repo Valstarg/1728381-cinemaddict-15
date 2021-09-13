@@ -37,7 +37,6 @@ function createPopupTemplate(parameter) {
   const {releaseCountry} = parameter.filmInfo.release;
   const genreCount = genres.length > 1 ? 'Genres' : 'Genre';
   const getGenres = (genresType) => genresType.map((genre) => `<span class="film-details__genre">${genre}</span>`).join('');
-
   const {watchlist, favorite, history} = parameter.userDetails;
   const comments = parameter.comments;
   const numberOfComments = comments.length;
@@ -141,9 +140,9 @@ function createPopupTemplate(parameter) {
         </section>`;
 }
 
-//
+// Создание класса.
 
-export default class popup {
+export default class Popup {
   constructor(parameter) {
     this._parameter= parameter;
     this._element = null;

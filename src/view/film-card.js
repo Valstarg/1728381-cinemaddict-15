@@ -36,7 +36,7 @@ function createFilmCardTemplate(parameter) {
 
 // Создание класса.
 
-export default class filmCard {
+export default class FilmCard {
   constructor(parameter) {
     this._parameter = parameter;
     this._element = null;

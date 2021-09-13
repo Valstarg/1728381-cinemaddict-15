@@ -10,7 +10,6 @@ export function getRandomNumber(from, before) {
   return Math.floor(Math.random() * (before - from + 1) + from);
 }
 
-
 // Функция выбора первого элемента массива.
 
 export function getFirstArrayElement(array) {

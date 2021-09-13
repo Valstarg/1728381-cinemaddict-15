@@ -15,7 +15,7 @@ function createProfileTemplate() {
 
 // Создание класса.
 
-export default class profile {
+export default class Profile {
   constructor() {
     this._element = null;
   }

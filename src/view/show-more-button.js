@@ -12,7 +12,7 @@ function createShowMoreTemplate() {
 
 // Создание класса.
 
-export default class showMoreButton {
+export default class ShowMoreButton {
   constructor() {
     this._element = null;
   }

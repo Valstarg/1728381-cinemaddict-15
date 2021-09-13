@@ -22,7 +22,7 @@ export function createSortTemplate() {
 
 // Создание класса.
 
-export default class sort {
+export default class Sort {
   constructor() {
     this._element = null;
   }

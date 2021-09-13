@@ -15,7 +15,7 @@ function createFilmListExtraTemplate(parameter) {
 
 //Создание класса.
 
-export default class filmsListExtra {
+export default class FilmsListExtra {
   constructor(parameter) {
     this._parameter = parameter;
     this._element = null;

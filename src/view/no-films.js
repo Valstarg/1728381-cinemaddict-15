@@ -12,7 +12,7 @@ function createEmptyListTemplate() {
 
 // Coздание класса.
 
-export default class noFilms {
+export default class NoFilms {
   constructor() {
     this._element = null;
   }
