@@ -1,28 +1,55 @@
 // Навигация по сайту.
-// Добавляем данные.
 
-export function createNavigationTemplate(parameter) {
-  const watch = [];
-  const favorites = [];
-  const history = [];
-  parameter.forEach((object) => {
-    if (object.userDetails.watchlist) {
-      watch.push(object.userDetails.watchlist);
-    }
-    if (object.userDetails.favorite) {
-      favorites.push(object.userDetails.favorite);
-    }
-    if (object.userDetails.alreadyWatched) {
-      history.push(object.userDetails.alreadyWatched);
-    }
-  });
+// Импорты.
+
+import {createTemplate} from '../utils/util.js';
+
+// Отрисовка колличества фильмов(фильтры). Добавляем данные.
+
+function createItemCountTemplate(filter) {
+  const {name, count} = filter;
+  return (
+    `<a href="#watchlist" class="main-navigation__item">${name}
+         <span class="main-navigation__item-count">${count}</span>
+     </a>`
+  );
+}
+
+// Отрисовка навигации.
+
+function createNavigationTemplate(filterItems) {
+  const filterItemsTemplate = filterItems
+    .map((filter, index) => createItemCountTemplate(filter, index === 0))
+    .join('');
   return `<nav class="main-navigation">
-             <div class="main-navigation__items">
-               <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
-               <a href="#watchlist" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${watch.length}</span></a>
-               <a href="#history" class="main-navigation__item">History <span class="main-navigation__item-count">${history.length}</span></a>
-               <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">${favorites.length}</span></a>
-             </div>
-             <a href="#stats" class="main-navigation__additional">Stats</a>
-           </nav>`;
+            <div class="main-navigation__items">
+              <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
+              ${filterItemsTemplate}
+            </div>
+            <a href="#stats" class="main-navigation__additional">Stats</a>
+          </nav>`;
+}
+
+// Создание класса.
+
+export default class Navigation {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createNavigationTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createTemplate(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
 }

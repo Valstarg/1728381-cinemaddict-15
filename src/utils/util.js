@@ -16,9 +16,10 @@ export function getFirstArrayElement(array) {
   return array[0];
 }
 
-// Функция выбора класса.
+// Функция выбора класса элемента в разметке.
 
-export const getClass = (variable) => variable ? 'film-card__controls-item film-card__controls-item--active' : 'film-card__controls-item';
+export const getCardClass = (variable) => variable ? 'film-card__controls-item film-card__controls-item--active' : 'film-card__controls-item';
+export const getPopupClass = (variable) => variable ? 'film-details__control-button film-details__control-button--active' : 'film-details__control-button';
 
 // Функция обрезки текста.
 
@@ -28,4 +29,12 @@ export function getSliceText(text) {
     someText += '...';
   }
   return someText;
+}
+
+// Функция создания шаблона.
+
+export function createTemplate(template) {
+  const newElement = document.createElement('template');
+  newElement.innerHTML = template;
+  return newElement.content.firstElementChild;
 }

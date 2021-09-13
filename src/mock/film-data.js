@@ -12,6 +12,7 @@ const FILMS_COUNT = 18;
 // Функции получения отдельных элементов информации о фильме.
 
 // Комментарии к фильму.
+
 // Текст комментария.
 
 function getCommentText() {
@@ -76,6 +77,7 @@ function generateComment() {
 }
 
 // Остальные данные.
+
 // ID
 
 function getId() {

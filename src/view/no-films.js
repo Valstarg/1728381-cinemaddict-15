@@ -1,24 +1,24 @@
-// Кнопка "Show more".
+// Пустой список фильмов.
 
 // Импорты.
 
 import {createTemplate} from '../utils/util.js';
 
-// Отрисовка кнопки.
+// Отрисовка списка.
 
-function createShowMoreTemplate() {
-  return ('<button class="films-list__show-more">Show more</button>');
+function createEmptyListTemplate() {
+  return ('<h2 class="films-list__title">There are no movies in our database</h2>');
 }
 
-// Создание класса.
+// Coздание класса.
 
-export default class ShowMoreButton {
+export default class NoFilms {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createShowMoreTemplate();
+    return createEmptyListTemplate();
   }
 
   getElement() {
