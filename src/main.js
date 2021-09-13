@@ -114,14 +114,6 @@ function renderFilmsList(listContainer, data) {
 
   const titleExtra = [{ title: 'Top rated' }, { title: 'Most commented' }];
 
-  /*for (let i = 0; i < EXTRA_FILMS_COUNT; i++) {
-    films.appendChild(new filmListExtraView(titleExtra[i]).getElement());
-  }*/
-
-  // Заменил выбор по селектору ниже и убрал цикл.
-
-  //const filmsListExtra = document.querySelectorAll('.films-list--extra');
-
   const [ratedFilmsListContainer, mostCommentsFilmListContainer] = Array(EXTRA_FILMS_COUNT)
     .fill(null)
     .map((_, index) => new filmListExtraView(titleExtra[index]).getElement());
@@ -132,8 +124,6 @@ function renderFilmsList(listContainer, data) {
     .slice(0, EXTRA_FILMS_COUNT);
   ratedFilms.forEach((card) => {
 
-    //const ratedFilmsListContainer = filmsListExtra[0].querySelector('.films-list__container');
-
     renderFilmCard(ratedFilmsListContainer, card);
   });
 
@@ -142,8 +132,6 @@ function renderFilmsList(listContainer, data) {
     .sort((a, b) => b.comments.length - a.comments.length)
     .slice(0, EXTRA_FILMS_COUNT);
   mostComments.forEach((card) => {
-
-    //const mostCommentsFilmListContainer = filmsListExtra[1].querySelector('.films-list__container');
 
     renderFilmCard(mostCommentsFilmListContainer, card);
   });
