@@ -36,5 +36,5 @@ export function getSliceText(text) {
 export function createTemplate(template) {
   const newElement = document.createElement('template');
   newElement.innerHTML = template;
-  return newElement.content;
+  return newElement.content.firstElementChild;
 }

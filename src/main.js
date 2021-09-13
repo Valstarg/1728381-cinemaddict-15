@@ -118,18 +118,14 @@ function renderFilmsList(listContainer, data) {
     films.appendChild(new filmListExtraView(titleExtra[i]).getElement());
   }*/
 
-  // Заменил выбор по селектору и убрал цикл.
-  // Вроде всё сделал правильно. Теперь не могу понять почему не рендерятся карточки блоков "Самые популярные" и "Самые комментируемые".
-  // Как будто теряется какое-то значение в процессе отрисовки. Я понимаю, что что-то упускаю, но не понимаю что.
-  // Вот на этом я и споткнулся перед командировкой.
-  // Уже голову сломмал.
+  // Заменил выбор по селектору ниже и убрал цикл.
+
+  //const filmsListExtra = document.querySelectorAll('.films-list--extra');
 
   const [ratedFilmsListContainer, mostCommentsFilmListContainer] = Array(EXTRA_FILMS_COUNT)
     .fill(null)
     .map((_, index) => new filmListExtraView(titleExtra[index]).getElement());
   films.append(ratedFilmsListContainer, mostCommentsFilmListContainer);
-
-  //const filmsListExtra = document.querySelectorAll('.films-list--extra');
 
   const ratedFilms = data
     .sort((a, b) => (b.filmInfo.totalRating > a.filmInfo.totalRating) ? 1 : -1)
