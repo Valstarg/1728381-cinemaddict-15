@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import {createTemplate} from '../utils/util.js';
+import AbstractionView from './abstraction.js';
 
 // Отрисовка списка. Добавляем данные.
 
@@ -13,26 +13,15 @@ function createFilmListExtraTemplate(parameter) {
            </section>`);
 }
 
-//Создание класса.
+// Создание класса. Абстракция и наследование.
 
-export default class FilmsListExtra {
+export default class FilmsListExtraTemplate extends AbstractionView {
   constructor(parameter) {
+    super();
     this._parameter = parameter;
-    this._element = null;
   }
 
   getTemplate() {
     return createFilmListExtraTemplate(this._parameter);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createTemplate(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

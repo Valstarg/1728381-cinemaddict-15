@@ -34,7 +34,7 @@ export function getSliceText(text) {
 // Функция создания шаблона.
 
 export function createTemplate(template) {
-  const newElement = document.createElement('template');
+  const newElement = document.createElement('div');
   newElement.innerHTML = template;
-  return newElement.content.firstElementChild;
+  return newElement.firstChild;
 }

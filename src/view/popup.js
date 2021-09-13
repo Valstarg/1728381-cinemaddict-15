@@ -3,7 +3,8 @@
 // Импорты.
 
 import * as dayjs from 'dayjs';
-import {getPopupClass, createTemplate} from '../utils/util.js';
+import {getPopupClass} from '../utils/util.js';
+import AbstractionView from './abstraction.js';
 
 // Попап окно.
 
@@ -140,26 +141,30 @@ function createPopupTemplate(parameter) {
         </section>`;
 }
 
-// Создание класса.
+// Создание класса. Абстракция и наследование. Добавил обработчик.
 
-export default class Popup {
+export default class PopupTemplate extends AbstractionView {
   constructor(parameter) {
+    super();
     this._parameter= parameter;
-    this._element = null;
+    this._getClosePopupHandler = this._getClosePopupHandler.bind(this);
   }
 
   getTemplate() {
     return createPopupTemplate(this._parameter);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createTemplate(this.getTemplate());
+  _getClosePopupHandler(evt) {
+    this._callback.closePopupFilm();
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      this._callback.closePopupFilm();
     }
-    return this._element;
+    document.querySelector('body').classList.remove('hide-overflow');
   }
 
-  removeElement() {
-    this._element = null;
+  setCloseClickHandler(callback) {
+    this._callback.closePopupFilm = callback;
+    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._getClosePopupHandler);
+    document.addEventListener('keydown', this._getClosePopupHandler);
   }
 }

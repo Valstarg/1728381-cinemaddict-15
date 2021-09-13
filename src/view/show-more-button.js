@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import {createTemplate} from '../utils/util.js';
+import AbstractionView from './abstraction.js';
 
 // Отрисовка кнопки.
 
@@ -10,25 +10,10 @@ function createShowMoreTemplate() {
   return ('<button class="films-list__show-more">Show more</button>');
 }
 
-// Создание класса.
+// Создание класса. Абстракция и наследование.
 
-export default class ShowMoreButton {
-  constructor() {
-    this._element = null;
-  }
-
+export default class ShowMoreTemplate extends AbstractionView {
   getTemplate() {
     return createShowMoreTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createTemplate(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

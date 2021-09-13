@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import {createTemplate} from '../utils/util.js';
+import AbstractionView from './abstraction.js';
 
 // Отрисовка списка сортировки.
 
@@ -20,25 +20,10 @@ export function createSortTemplate() {
     </ul>`);
 }
 
-// Создание класса.
+// Создание класса. Абстракция и наследование.
 
-export default class Sort {
-  constructor() {
-    this._element = null;
-  }
-
+export default class SortTemplate extends AbstractionView {
   getTemplate() {
     return createSortTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createTemplate(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
