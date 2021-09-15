@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import AbstractionView from './abstraction.js';
+import AbstractView from './abstraction.js';
 
 // Отрисовка статистики. Добавляем данные.
 
@@ -12,7 +12,7 @@ function createStatTemplate(parameter) {
 
 // Создание класса. Абстракция и наследование.
 
-export default class StatTemplate extends AbstractionView {
+export default class StatComponent extends AbstractView {
   constructor(parameter) {
     super();
     this._parameter = parameter;

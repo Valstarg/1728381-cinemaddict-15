@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import AbstractionView from './abstraction.js';
+import AbstractView from './abstraction.js';
 
 // Отрисовка списка.
 
@@ -10,9 +10,9 @@ function createEmptyListTemplate() {
   return ('<h2 class="films-list__title">There are no movies in our database</h2>');
 }
 
-// Создание класса. Абстракция и наследование.
+// Создание класса.
 
-export default class NoFilmsTemplate extends AbstractionView {
+export default class NoFilmsComponent extends AbstractView {
   getTemplate() {
     return createEmptyListTemplate();
   }

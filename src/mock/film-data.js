@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import {getRandomNumber} from '../utils/util.js';
 
 // Магические числа.

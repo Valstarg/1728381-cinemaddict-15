@@ -4,6 +4,14 @@
 
 const TEXT_MAX = 200;
 
+// Переменные.
+
+export const typeSort = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
+
 // Функция выбора случайного числа.
 
 export function getRandomNumber(from, before) {
@@ -29,12 +37,4 @@ export function getSliceText(text) {
     someText += '...';
   }
   return someText;
-}
-
-// Функция создания шаблона.
-
-export function createTemplate(template) {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-  return newElement.firstChild;
 }

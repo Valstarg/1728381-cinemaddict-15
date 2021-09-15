@@ -2,9 +2,9 @@
 
 // Импорты.
 
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import {getPopupClass} from '../utils/util.js';
-import AbstractionView from './abstraction.js';
+import AbstractView from './abstraction.js';
 
 // Попап окно.
 
@@ -141,13 +141,17 @@ function createPopupTemplate(parameter) {
         </section>`;
 }
 
-// Создание класса. Абстракция и наследование. Добавил обработчик.
+// Создание класса.
 
-export default class PopupTemplate extends AbstractionView {
+export default class PopupComponent extends AbstractView {
   constructor(parameter) {
     super();
     this._parameter= parameter;
+    this._filmPopup = this.getElement();
     this._getClosePopupHandler = this._getClosePopupHandler.bind(this);
+    this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
+    this._historyClickHandler = this._historyClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -162,9 +166,39 @@ export default class PopupTemplate extends AbstractionView {
     document.querySelector('body').classList.remove('hide-overflow');
   }
 
+  _historyClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.historyClick();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
+  _watchlistClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.watchlistClick();
+  }
+
+  setHistoryClickHandler(callback) {
+    this._callback.historyClick = callback;
+    this._filmPopup.querySelector('.film-details__control-button--watched').addEventListener('click', this._historyClickHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this._filmPopup.querySelector('.film-details__control-button--favorite').addEventListener('click', this._favoriteClickHandler);
+  }
+
+  setWatchlistClickHandler(callback) {
+    this._callback.watchlistClick = callback;
+    this._filmPopup.querySelector('.film-details__control-button--watchlist').addEventListener('click', this._watchlistClickHandler);
+  }
+
   setCloseClickHandler(callback) {
     this._callback.closePopupFilm = callback;
-    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._getClosePopupHandler);
+    this._filmPopup.querySelector('.film-details__close-btn').addEventListener('click', this._getClosePopupHandler);
     document.addEventListener('keydown', this._getClosePopupHandler);
   }
 }

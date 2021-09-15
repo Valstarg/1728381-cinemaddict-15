@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import AbstractionView from './abstraction.js';
+import AbstractView from './abstraction.js';
 
 // Отрисовка колличества фильмов(фильтры). Добавляем данные.
 
@@ -30,9 +30,9 @@ function createNavigationTemplate(filterItems) {
           </nav>`;
 }
 
-// Создание класса. Абстракция и наследование.
+// Создание класса.
 
-export default class NavigationTemplate extends AbstractionView {
+export default class NavigationComponent extends AbstractView {
   constructor(filters) {
     super();
     this._filters = filters;
