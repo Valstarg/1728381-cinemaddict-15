@@ -32,7 +32,7 @@ function getCommentText() {
 
 // Имя автора.
 
-function getAuthorName() {
+export function getAuthorName() {
   return {
     0: 'John Crooth',
     1: 'Frank Silackovich',
@@ -58,17 +58,25 @@ function getEmoji() {
   }[getRandomNumber(0, 3)];
 }
 
-// Дата.
+// Дата комментария.
 
 function getCommentDate() {
-  const dayGap = getRandomNumber(-1095, 0);
-  return dayjs().add(dayGap, 'day').toDate();
+  const dayGap = getRandomNumber(-14400, 0);
+  return dayjs().add(dayGap, 'minutes').toDate();
+}
+
+// ID
+
+export function getId() {
+  const random = Math.random();
+  return random.toString(20).substr(2);
 }
 
 // Генерация комментария.
 
 function generateComment() {
   return {
+    id: getId(),
     text: getCommentText(),
     authorName: getAuthorName(),
     emoji: getEmoji(),
@@ -77,13 +85,6 @@ function generateComment() {
 }
 
 // Остальные данные.
-
-// ID
-
-function getId() {
-  const random = Math.random();
-  return random.toString(20).substr(2);
-}
 
 // Названия.
 
@@ -205,7 +206,7 @@ function getDescription() {
 // Список просмотров.
 
 function getWatchList() {
-  const dayGap = getRandomNumber(-1095, 0);
+  const dayGap = getRandomNumber(-40, 0);
   return dayjs().add(dayGap, 'day').toDate();
 }
 
@@ -228,7 +229,7 @@ function generateObject() {
         'date': getReleaseDate(),
         'releaseCountry': getCountry(),
       },
-      'runtime': `1h ${getRandomNumber(10, 50)}m`,
+      'runtime': getRandomNumber(45, 150),
       'genres': getGenres(),
       'description': getDescription(),
     },

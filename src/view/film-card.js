@@ -3,6 +3,7 @@
 // Импорты.
 
 import dayjs from 'dayjs';
+import he from 'he';
 import {getFirstArrayElement, getCardClass, getSliceText} from '../utils/util.js';
 import AbstractView from './abstraction.js';
 
@@ -13,20 +14,26 @@ function createFilmCardTemplate(parameter) {
   const rating = parameter.filmInfo.totalRating;
   const date = dayjs(parameter.filmInfo.release.date).format('YYYY');
   const numberOfComments = parameter.comments.length;
+  const commentsTitle = numberOfComments === 1 ? 'Comment' : 'Comments';
   const {watchlist, favorite} = parameter.userDetails;
-  const history = parameter.userDetails.alreadyWatched;
+  const history = parameter.userDetails.history;
+  function getTime() {                                     // Отрисовка времени в минутах. Вынести в отдельную структуру.
+    const hours = Math.floor(runtime/60);
+    const minutes = runtime%60;
+    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+  }
 
   return `<article class="film-card">
              <h3 class="film-card__title">${title}</h3>
              <p class="film-card__rating">${rating}</p>
              <p class="film-card__info">
                <span class="film-card__year">${date}</span>
-               <span class="film-card__duration">${runtime}</span>
+               <span class="film-card__duration">${getTime()}</span>
                <span class="film-card__genre">${getFirstArrayElement(genres)}</span>
              </p>
              <img src="./images/posters/${poster}" alt="" class="film-card__poster">
-             <p class="film-card__description">${getSliceText(description)}</p>
-             <a class="film-card__comments">${numberOfComments} comments</a>
+             <p class="film-card__description">${getSliceText(he.encode(description))}</p>
+             <a class="film-card__comments">${numberOfComments} ${commentsTitle}</a>
              <div class="film-card__controls">
                <button class="${getCardClass(watchlist)} film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
                <button class="${getCardClass(history)} film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
@@ -54,23 +61,31 @@ export default class FilmCardComponent extends AbstractView {
 
   _favoriteClickHandler(evt) {
     evt.preventDefault();
+    if (document.querySelector('.film-details')) {
+      document.querySelector('.film-details').remove();
+    }
     this._callback.favoriteClick();
   }
 
   _historyClickHandler(evt) {
     evt.preventDefault();
+    if (document.querySelector('.film-details')) {
+      document.querySelector('.film-details').remove();
+    }
     this._callback.historyClick();
   }
 
   _watchlistClickHandler(evt) {
     evt.preventDefault();
+    if (document.querySelector('.film-details')) {
+      document.querySelector('.film-details').remove();
+    }
     this._callback.watchlistClick();
   }
 
   _getOpenClickHandler(evt) {
     evt.preventDefault();
     this._callback.openPopupFilm();
-    document.querySelector('body').classList.add('hide-overflow');
   }
 
   setFavoriteClickHandler(callback) {

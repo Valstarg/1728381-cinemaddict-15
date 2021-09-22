@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import AbstractComponent from '../view/abstraction.js';
+import AbstractView from '../view/abstraction.js';
 
 // Переменные.
 
@@ -14,11 +14,11 @@ export const renderPosition = {
 // Функции.
 
 export function render(container, child, place) {
-  if (container instanceof AbstractComponent) {
+  if (container instanceof AbstractView) {
     container = container.getElement();
   }
 
-  if (child instanceof AbstractComponent) {
+  if (child instanceof AbstractView) {
     child = child.getElement();
   }
 
@@ -43,7 +43,10 @@ export function createTemplate(template) {
 // Функция удаления компонентов.
 
 export function remove(component) {
-  if (!(component instanceof AbstractComponent)) {
+  if (component === null) {
+    return;
+  }
+  if (!(component instanceof AbstractView)) {
     throw new Error('Can remove only components');
   }
   component.getElement().remove();
@@ -53,11 +56,11 @@ export function remove(component) {
 // Функция замещения элементов.
 
 export function replace(newChild, oldChild) {
-  if (oldChild instanceof AbstractComponent) {
+  if (oldChild instanceof AbstractView) {
     oldChild = oldChild.getElement();
   }
 
-  if (newChild instanceof AbstractComponent) {
+  if (newChild instanceof AbstractView) {
     newChild = newChild.getElement();
   }
 
