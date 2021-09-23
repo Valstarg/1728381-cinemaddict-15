@@ -184,8 +184,6 @@ function createPopupTemplate(data, dataComment) {
 // 1. Создать smart.
 // 2. Заменить abstract.
 // 3. Внести изменения в попап.
-// 4. Смайлы и текст комментария в попап(подумать).
-// 5. DayJS в моках. Комментарии, дата релиза, продолжительность.
 
 export default class PopupComponent extends SmartView {
   constructor(parameter) {
