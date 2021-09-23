@@ -180,11 +180,6 @@ function createPopupTemplate(data, dataComment) {
 
 // Создание класса.
 
-// module6.
-// 1. Создать smart.
-// 2. Заменить abstract.
-// 3. Внести изменения в попап.
-
 export default class PopupComponent extends SmartView {
   constructor(parameter) {
     super();
