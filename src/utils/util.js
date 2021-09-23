@@ -1,8 +1,51 @@
 // Утилитарные функции и переменные.
 
+
+// Импорты.
+
+import dayjs from 'dayjs';
+
 // Магические числа.
 
 const TEXT_MAX = 200;
+//const BAR_HEIGHT = 50;
+
+// Переменные.
+
+export const typeSort = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
+
+export const filterType = {
+  ALL: 'all',
+  FAVORITES: 'favorites',
+  HISTORY: 'history',
+  WATCHLIST: 'watchlist',
+  STATS: 'stats',
+};
+
+export const updateType = {
+  PATCH: 'PATCH',
+  MAJOR: 'MAJOR',
+  STATS: 'STATS',
+};
+
+export const filter = {
+  [filterType.ALL]: (films) => films,
+  [filterType.HISTORY]: (films) => films.filter((film) => film.userDetails.history),
+  [filterType.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
+  [filterType.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist),
+};
+
+export const StatsFilterType = {
+  ALL: 'all-time',
+  YEAR: 'year',
+  MONTH: 'month',
+  WEEK: 'week',
+  TODAY: 'today',
+};
 
 // Функция выбора случайного числа.
 
@@ -31,10 +74,63 @@ export function getSliceText(text) {
   return someText;
 }
 
-// Функция создания шаблона.
+//
 
-export function createTemplate(template) {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-  return newElement.firstChild;
+export function isWatchingDate(date, sortType) {
+  switch (sortType) {
+    case StatsFilterType.ALL:
+      return date;
+    case StatsFilterType.YEAR:
+      return date = date.filter((film) => dayjs(film.userDetails.watchingDate).diff() > -31536000000);
+    case StatsFilterType.MONTH:
+      return date = date.filter((film) => dayjs(film.userDetails.watchingDate).diff() > -2592000000);
+    case StatsFilterType.WEEK:
+      return date = date.filter((film) => dayjs(film.userDetails.watchingDate).diff() > -604800000);
+    case StatsFilterType.TODAY:
+      return date = date.filter((film) => dayjs(film.userDetails.watchingDate).diff() > -86400000);
+  }
+}
+
+//
+
+export function getSumRuntime(data) {
+  const runtime = [];
+  data.forEach((film) => {
+    runtime.push(film.filmInfo.runtime);
+  });
+  const sum = runtime.reduce((a, b) => a + b, 0);
+  return sum;
+}
+
+//
+
+export function getGenres(films) {
+  const genres = new Set();
+  films.forEach((film) => film.filmInfo.genres.forEach((genre) => genres.add(genre)));
+  return genres;
+}
+
+//
+
+export function getDataGenres(films, count) {
+  const allMoviesGenres = [];
+  films.forEach((film) => allMoviesGenres.push(...film.filmInfo.genres));
+  const dataGenres = [];
+  getGenres(films).forEach((genre) =>
+    dataGenres.push({
+      genre: genre,
+      count: allMoviesGenres.filter((allMoviesgenre) => allMoviesgenre === genre).length,
+    }),
+  );
+  const newGenres = dataGenres.sort((a, b) => (b.count > a.count) ? 1 : -1);
+  const counts = [];
+  const genres = [];
+  newGenres.forEach((i) => {
+    counts.push(i.count);
+    genres.push(i.genre);
+  });
+  if (count) {
+    return counts;
+  }
+  return genres;
 }

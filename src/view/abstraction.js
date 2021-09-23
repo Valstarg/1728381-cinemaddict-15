@@ -2,13 +2,13 @@
 
 // Имрорты.
 
-import {createTemplate} from '../utils/util.js';
+import {createTemplate} from '../utils/render.js';
 
 // Создание класса.
 
-export default class Abstraction {
+export default class AbstractComponent {
   constructor() {
-    if (new.target === Abstraction) {
+    if (new.target === AbstractComponent) {
       throw new Error('Can not instantiate abstraction, only concrete one.');
     }
 
