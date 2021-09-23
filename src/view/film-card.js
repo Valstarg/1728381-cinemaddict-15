@@ -17,7 +17,7 @@ function createFilmCardTemplate(parameter) {
   const commentsTitle = numberOfComments === 1 ? 'Comment' : 'Comments';
   const {watchlist, favorite} = parameter.userDetails;
   const history = parameter.userDetails.history;
-  function getTime() {                                     // Отрисовка времени в минутах. Вынести в отдельную структуру.
+  function getTime() {                                                     // Отрисовка времени в минутах. Вынести в отдельную структуру.
     const hours = Math.floor(runtime/60);
     const minutes = runtime%60;
     return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
