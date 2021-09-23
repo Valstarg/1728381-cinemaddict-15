@@ -15,7 +15,7 @@ import {getId, getAuthorName} from '../mock/film-data.js';
 function createCommentTemplate(dataComment) {
   const {text, authorName, emoji, date, id} = dataComment;
 
-  function parseDate(d) {                               // Дата комментария. Вынести в отдельную структуру?
+  function parseDate(d) {
     let newDate;
     if (-604800000 < dayjs(d).diff()) {
       newDate = `${Math.floor(dayjs(d).diff() / -86400000)} days ago`;
