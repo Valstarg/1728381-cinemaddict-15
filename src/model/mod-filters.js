@@ -1,19 +1,21 @@
+// Модель сортировки.
+
 // Импорты.
 
 import AbstractObserver from '../utils/abstract-observer.js';
-import {filterType} from '../utils/util.js';
+import {filterTypes} from '../utils/util.js';
 
 // Создание класса.
 
-export default class FilterComponent extends AbstractObserver {
+export default class FiltersModelComponent extends AbstractObserver {
   constructor() {
     super();
-    this._activeFilter = filterType.ALL;
+    this._activeFilter = filterTypes.ALL;
   }
 
-  setFilter(updateType, filter) {
+  setFilter(typeUpdate, filter) {
     this._activeFilter = filter;
-    this._notify(updateType, filter);
+    this._notify(typeUpdate, filter);
   }
 
   getFilter() {

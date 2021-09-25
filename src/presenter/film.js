@@ -5,14 +5,16 @@
 import FilmCardView from '../view/film-card.js';
 import PopupView from '../view/popup.js';
 import {render, renderPosition, replace, remove} from '../utils/render.js';
-import {updateType} from '../utils/util.js';
+import {updateType, userAction} from '../utils/util.js';
+import {api} from '../api';
 
 //  Создание класса.
 
 export default class FilmComponent {
-  constructor(filmContainer, changeData) {
+  constructor(filmContainer, changeData, typeFilter) {
     this._filmContainer = filmContainer;
     this._changeData = changeData;
+    this._typeFilter = typeFilter;
     this._cardComponent = null;
     this._handleOpenClick = this._handleOpenClick.bind(this);
     this._handleCloseClick = this._handleCloseClick.bind(this);
@@ -22,24 +24,24 @@ export default class FilmComponent {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleAddClick = this._handleAddClick.bind(this);
-    this._handleEditPopup = this._handleEditPopup.bind(this);
+    this._resetForm = this._resetForm.bind(this);
   }
 
-  init(card) {
+  init(card, comments = []) {
     this._card = card;
+    this._comments = comments;
     const prevCardComponent = this._cardComponent;
     this._cardComponent = new FilmCardView(card);
-    //this._cardPopupComponent = new PopupView(card);
+    if (this._cardPopupComponent) {
+      if (document.querySelector('.film-details')) {
+        document.querySelector('.film-details').remove();
+      }
+      this._renderPopup(this._comments, this._cardPopupComponent.getScroll());
+    }
     this._cardComponent.setOpenClickHandler(this._handleOpenClick);
     this._cardComponent.setHistoryClickHandler(this._handleHistoryClick);
     this._cardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._cardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
-    //this._cardPopupComponent.setCloseClickHandler(this._handleCloseClick);
-    //this._cardPopupComponent.setHistoryClickHandler(this._handleEditPopup);
-    //this._cardPopupComponent.setFavoriteClickHandler(this._handleEditPopup);
-    //this._cardPopupComponent.setWatchlistClickHandler(this._handleEditPopup);
-    //this._cardPopupComponent.setDeleteClickHandler(this._handleDeleteClick);
-    //this._cardPopupComponent.setAddClickHandler(this._handleAddClick);
     if (prevCardComponent === null) {
       render(this._filmContainer, this._cardComponent, renderPosition.BEFOREEND);
       return;
@@ -50,29 +52,47 @@ export default class FilmComponent {
     remove(prevCardComponent);
   }
 
-  destroy() {
-    remove(this._cardComponent);
+  _resetForm() {
+    this._cardPopupComponent.updateData({
+      isDisable: false,
+      isDelete: false,
+    });
   }
 
-  _renderFilmPopup() {
+  destroy() {
+    remove(this._cardComponent);
+    if (document.querySelector('.film-details')) {
+      this._handleClosePopupClick();
+    }
+    document.body.classList.remove('hide-overflow');
+  }
+
+  _renderPopup(comments = [], scroll) {
     if (this._cardPopupComponent) {
       remove(this._cardPopupComponent);
     }
-    this._cardPopupComponent = new PopupView(this._card);
+    document.removeEventListener('keydown', this._handleCloseEscClick);
+    this._cardPopupComponent = new PopupView(this._card, comments);
     this._cardPopupComponent.setCloseClickHandler(this._handleCloseClick);
-    this._cardPopupComponent.setHistoryClickHandler(this._handleEditPopup);
-    this._cardPopupComponent.setFavoriteClickHandler(this._handleEditPopup);
-    this._cardPopupComponent.setWatchlistClickHandler(this._handleEditPopup);
+    this._cardPopupComponent.setHistoryClickHandler(this._handleHistoryClick);
+    this._cardPopupComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._cardPopupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._cardPopupComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._cardPopupComponent.setAddClickHandler(this._handleAddClick);
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this._handleCloseEscClick);
     render(document.body, this._cardPopupComponent, renderPosition.BEFOREEND);
+    this._cardPopupComponent.getElement().scrollTop = scroll;
   }
 
   _handleHistoryClick() {
+    const currentFilterType = this._typeFilter === 'all' || this._typeFilter !== 'history';
+    if (!currentFilterType && this._cardPopupComponent) {
+      this._handleClosePopupClick();
+    }
     this._changeData(
-      updateType.MAJOR,
+      userAction.UPDATE_FILM,
+      currentFilterType ? updateType.PATCH : updateType.MINOR,
       {
         ...this._card,
         userDetails: {
@@ -83,8 +103,10 @@ export default class FilmComponent {
   }
 
   _handleFavoriteClick() {
+    const currentFilterType = this._typeFilter === 'all' || this._typeFilter !== 'favorites';
     this._changeData(
-      updateType.MAJOR,
+      userAction.UPDATE_FILM,
+      currentFilterType ? updateType.PATCH : updateType.MINOR,
       {
         ...this._card,
         userDetails: {
@@ -95,8 +117,10 @@ export default class FilmComponent {
   }
 
   _handleWatchlistClick() {
+    const currentFilterType = this._typeFilter === 'all' || this._typeFilter !== 'watchlist';
     this._changeData(
-      updateType.MAJOR,
+      userAction.UPDATE_FILM,
+      currentFilterType ? updateType.PATCH : updateType.MINOR,
       {
         ...this._card,
         userDetails: {
@@ -106,31 +130,46 @@ export default class FilmComponent {
       });
   }
 
-  _handleEditPopup(card) {
-    this._changeData(
-      updateType.MAJOR,
-      card);
+  _handleDeleteClick(commentId, filmId) {
+    this._cardPopupComponent.updateData({isDisable: true, isDelete: true});
+
+    api.deleteComment(commentId).then(() => {
+      this._changeData(
+        userAction.DELETE_COMMENT,
+        updateType.PATCH,
+        { commentId, filmId },
+      );
+    }).catch(() => {
+      this._cardPopupComponent.updateData({isDisable: false, isDelete: false});
+      this._cardPopupComponent.shake(this._resetForm);
+    });
   }
 
-  _handleDeleteClick(card) {
-    this._changeData(
-      updateType.PATCH,
-      card,
-    );
-  }
+  _handleAddClick(card, newComment) {
+    this._cardPopupComponent.updateData({isDisable: true, emojiName: null});
 
-  _handleAddClick(card) {
-    this._changeData(
-      updateType.PATCH,
-      card,
-    );
+    api.addComment(card.id, newComment).then((response) => {
+      this._changeData(
+        userAction.ADD_COMMENT,
+        updateType.PATCH,
+        response ,
+      );
+    }).catch(() => {
+      this._cardPopupComponent.updateData({isDisable: false});
+      this._cardPopupComponent.shake(this._resetForm);
+    });
   }
 
   _handleOpenClick() {
     if (document.querySelector('.film-details')) {
       document.querySelector('.film-details').remove();
     }
-    this._renderFilmPopup();
+    this._renderPopup();
+    this._changeData(
+      userAction.LOAD_COMMENTS,
+      updateType.PATCH,
+      { film: this._card },
+    );
   }
 
   _handleCloseClick() {

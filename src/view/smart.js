@@ -1,3 +1,5 @@
+// Класс Smart.
+
 // Импорты.
 
 import AbstractView from './abstraction.js';
@@ -10,7 +12,7 @@ export default class SmartComponent extends AbstractView {
     this._data = {};
   }
 
-  updateData(update, dataNew) {                      // Обновляем данные.
+  updateData(update, dataNew) {
     if (!update) {
       return;
     }
@@ -21,7 +23,7 @@ export default class SmartComponent extends AbstractView {
     this.updateElement();
   }
 
-  updateElement() {                         // Обновляем элемент с новыми данными.
+  updateElement() {
     const prevElement = this.getElement();
     const parent = prevElement.parentElement;
     this.removeElement();

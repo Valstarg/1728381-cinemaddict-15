@@ -1,6 +1,5 @@
 // Утилитарные функции и переменные.
 
-
 // Импорты.
 
 import dayjs from 'dayjs';
@@ -8,17 +7,19 @@ import dayjs from 'dayjs';
 // Магические числа.
 
 const TEXT_MAX = 200;
-//const BAR_HEIGHT = 50;
+const FILMS_NONE = 0;
+const FILMS_MIN = 10;
+const FILMS_MAX = 20;
 
 // Переменные.
 
-export const typeSort = {
+export const sortTypes = {
   DEFAULT: 'default',
   DATE: 'date',
   RATING: 'rating',
 };
 
-export const filterType = {
+export const filterTypes = {
   ALL: 'all',
   FAVORITES: 'favorites',
   HISTORY: 'history',
@@ -26,20 +27,29 @@ export const filterType = {
   STATS: 'stats',
 };
 
+export const userAction = {
+  UPDATE_FILM: 'UPDATE_FILM',
+  ADD_COMMENT: 'ADD_COMMENT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+  LOAD_COMMENTS: 'LOAD_COMMENTS',
+};
+
 export const updateType = {
   PATCH: 'PATCH',
+  MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   STATS: 'STATS',
+  INIT: 'INIT',
 };
 
 export const filter = {
-  [filterType.ALL]: (films) => films,
-  [filterType.HISTORY]: (films) => films.filter((film) => film.userDetails.history),
-  [filterType.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
-  [filterType.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist),
+  [filterTypes.ALL]: (films) => films,
+  [filterTypes.HISTORY]: (films) => films.filter((film) => film.userDetails.history),
+  [filterTypes.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
+  [filterTypes.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist),
 };
 
-export const StatsFilterType = {
+export const statFilterTypes = {
   ALL: 'all-time',
   YEAR: 'year',
   MONTH: 'month',
@@ -47,11 +57,11 @@ export const StatsFilterType = {
   TODAY: 'today',
 };
 
-// Функция выбора случайного числа.
-
-export function getRandomNumber(from, before) {
-  return Math.floor(Math.random() * (before - from + 1) + from);
-}
+const ranks = {
+  NOVICE: 'Novice',
+  FAN: 'Fan',
+  MOVIE_BUFF: 'Movie Buff',
+};
 
 // Функция выбора первого элемента массива.
 
@@ -63,37 +73,28 @@ export function getFirstArrayElement(array) {
 
 export const getCardClass = (variable) => variable ? 'film-card__controls-item film-card__controls-item--active' : 'film-card__controls-item';
 export const getPopupClass = (variable) => variable ? 'film-details__control-button film-details__control-button--active' : 'film-details__control-button';
+export const getSliceText = (text) => text.length > TEXT_MAX ? `${text.slice(0, TEXT_MAX)}...` : text;
 
-// Функция обрезки текста.
+//  Статистика просмотров.
 
-export function getSliceText(text) {
-  let someText = text.slice(0, TEXT_MAX);
-  if (text.length > someText.length) {
-    someText += '...';
-  }
-  return someText;
-}
-
-//
-
-export function isWatchingDate(date, sortType) {
+export function isDate(date, sortType) {
   switch (sortType) {
-    case StatsFilterType.ALL:
+    case statFilterTypes.ALL:
       return date;
-    case StatsFilterType.YEAR:
+    case statFilterTypes.YEAR:
       return date = date.filter((film) => dayjs(film.userDetails.watchingDate).diff() > -31536000000);
-    case StatsFilterType.MONTH:
+    case statFilterTypes.MONTH:
       return date = date.filter((film) => dayjs(film.userDetails.watchingDate).diff() > -2592000000);
-    case StatsFilterType.WEEK:
+    case statFilterTypes.WEEK:
       return date = date.filter((film) => dayjs(film.userDetails.watchingDate).diff() > -604800000);
-    case StatsFilterType.TODAY:
+    case statFilterTypes.TODAY:
       return date = date.filter((film) => dayjs(film.userDetails.watchingDate).diff() > -86400000);
   }
 }
 
-//
+//  Продолжителльность.
 
-export function getSumRuntime(data) {
+export function getRuntime(data) {
   const runtime = [];
   data.forEach((film) => {
     runtime.push(film.filmInfo.runtime);
@@ -102,15 +103,13 @@ export function getSumRuntime(data) {
   return sum;
 }
 
-//
+//  Жанр фильма.
 
 export function getGenres(films) {
   const genres = new Set();
   films.forEach((film) => film.filmInfo.genres.forEach((genre) => genres.add(genre)));
   return genres;
 }
-
-//
 
 export function getDataGenres(films, count) {
   const allMoviesGenres = [];
@@ -133,4 +132,21 @@ export function getDataGenres(films, count) {
     return counts;
   }
   return genres;
+}
+
+//  Инфо о пользователе.
+
+export function getRank(watchedCount) {
+  const isNoviceRank = watchedCount > FILMS_NONE && watchedCount <= FILMS_MIN;
+  const isFanRank = watchedCount > FILMS_MIN && watchedCount <= FILMS_MAX;
+  const isMovieBuffRank = watchedCount > FILMS_MAX;
+  if (isNoviceRank) {
+    return ranks.NOVICE;
+  } else if (isFanRank) {
+    return ranks.FAN;
+  } else if (isMovieBuffRank) {
+    return ranks.MOVIE_BUFF;
+  } else {
+    return '';
+  }
 }

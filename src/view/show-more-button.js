@@ -7,7 +7,7 @@ import AbstractView from './abstraction.js';
 // Отрисовка кнопки.
 
 function createShowMoreTemplate() {
-  return ('<button class="films-list__show-more">Show more</button>');
+  return '<button class="films-list__show-more">Show more</button>';
 }
 
 // Создание класса.

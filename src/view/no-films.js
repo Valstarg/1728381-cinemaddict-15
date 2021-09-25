@@ -3,22 +3,24 @@
 // Импорты.
 
 import AbstractView from './abstraction.js';
-import {filterType} from '../utils/util.js';
+import {filterTypes} from '../utils/util.js';
 
 // Переменные.
 
 const NoFilmsText = {
-  [filterType.ALL]: 'There are no movies in our database',
-  [filterType.FAVORITES]: 'There are no favorite movies now',
-  [filterType.WATCHLIST]: 'There are no movies to watch now',
-  [filterType.HISTORY]: 'There are no watched movies now',
+  [filterTypes.ALL]: 'There are no movies in our database',
+  [filterTypes.FAVORITES]: 'There are no favorite movies now',
+  [filterTypes.WATCHLIST]: 'There are no movies to watch now',
+  [filterTypes.HISTORY]: 'There are no watched movies now',
 };
 
 // Отрисовка списка.
 
 function createEmptyListTemplate(typeFilter) {
   const noFilmsTextValue = NoFilmsText[typeFilter];
-  return `<h2 class="films-list__title">${noFilmsTextValue}</h2 > `;
+  return `<h2 class="films-list__title">
+            ${noFilmsTextValue}
+          </h2 > `;
 }
 
 // Создание класса.

@@ -13,25 +13,21 @@ function createFilmCardTemplate(parameter) {
   const {title, runtime, genres, poster, description} = parameter.filmInfo;
   const rating = parameter.filmInfo.totalRating;
   const date = dayjs(parameter.filmInfo.release.date).format('YYYY');
+  const hours = Math.floor(runtime / 60);
+  const minutes = runtime % 60;
   const numberOfComments = parameter.comments.length;
   const commentsTitle = numberOfComments === 1 ? 'Comment' : 'Comments';
-  const {watchlist, favorite} = parameter.userDetails;
-  const history = parameter.userDetails.history;
-  function getTime() {                                                     // Отрисовка времени в минутах. Вынести в отдельную структуру.
-    const hours = Math.floor(runtime/60);
-    const minutes = runtime%60;
-    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-  }
+  const {watchlist, favorite, history} = parameter.userDetails;
 
   return `<article class="film-card">
              <h3 class="film-card__title">${title}</h3>
              <p class="film-card__rating">${rating}</p>
              <p class="film-card__info">
                <span class="film-card__year">${date}</span>
-               <span class="film-card__duration">${getTime()}</span>
+               <span class="film-card__duration">${hours}h ${minutes}m</span>
                <span class="film-card__genre">${getFirstArrayElement(genres)}</span>
              </p>
-             <img src="./images/posters/${poster}" alt="" class="film-card__poster">
+             <img src="${poster}" alt="" class="film-card__poster">
              <p class="film-card__description">${getSliceText(he.encode(description))}</p>
              <a class="film-card__comments">${numberOfComments} ${commentsTitle}</a>
              <div class="film-card__controls">
@@ -52,7 +48,7 @@ export default class FilmCardComponent extends AbstractView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._historyClickHandler = this._historyClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
-    this._getOpenClickHandler = this._getOpenClickHandler.bind(this);
+    this._openClickHandler = this._openClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -64,7 +60,7 @@ export default class FilmCardComponent extends AbstractView {
     if (document.querySelector('.film-details')) {
       document.querySelector('.film-details').remove();
     }
-    this._callback.favoriteClick();
+    this._callback.favoriteClick(this._parameter);
   }
 
   _historyClickHandler(evt) {
@@ -83,9 +79,9 @@ export default class FilmCardComponent extends AbstractView {
     this._callback.watchlistClick();
   }
 
-  _getOpenClickHandler(evt) {
+  _openClickHandler(evt) {
     evt.preventDefault();
-    this._callback.openPopupFilm();
+    this._callback.openPopup();
   }
 
   setFavoriteClickHandler(callback) {
@@ -104,9 +100,9 @@ export default class FilmCardComponent extends AbstractView {
   }
 
   setOpenClickHandler(callback) {
-    this._callback.openPopupFilm = callback;
-    this._filmCard.querySelector('.film-card__poster').addEventListener('click', this._getOpenClickHandler);
-    this._filmCard.querySelector('.film-card__comments').addEventListener('click', this._getOpenClickHandler);
-    this._filmCard.querySelector('.film-card__title').addEventListener('click', this._getOpenClickHandler);
+    this._callback.openPopup = callback;
+    this._filmCard.querySelector('.film-card__poster').addEventListener('click', this._openClickHandler);
+    this._filmCard.querySelector('.film-card__comments').addEventListener('click', this._openClickHandler);
+    this._filmCard.querySelector('.film-card__title').addEventListener('click', this._openClickHandler);
   }
 }
