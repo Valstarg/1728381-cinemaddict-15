@@ -3,22 +3,22 @@
 // Импорты.
 
 import AbstractView from './abstraction.js';
-import {typeSort} from '../utils/util.js';
+import {sortTypes} from '../utils/util.js';
 
 // Отрисовка списка сортировки.
 
 export function createSortTemplate(currentSortType) {
-  return (`<ul class="sort">
+  return `<ul class="sort">
       <li>
-        <a href="#" data-sort-type="${typeSort.DEFAULT}" class="sort__button ${currentSortType === typeSort.DEFAULT ? 'sort__button--active' : ''}">Sort by default</a>
+        <a href="#" data-sort-type="${sortTypes.DEFAULT}" class="sort__button ${currentSortType === sortTypes.DEFAULT ? 'sort__button--active' : ''}">Sort by default</a>
       </li>
       <li>
-        <a href="#" data-sort-type="${typeSort.DATE}" class="sort__button ${currentSortType === typeSort.DATE ? 'sort__button--active' : ''}">Sort by date</a>
+        <a href="#" data-sort-type="${sortTypes.DATE}" class="sort__button ${currentSortType === sortTypes.DATE ? 'sort__button--active' : ''}">Sort by date</a>
       </li>
       <li>
-        <a href="#" data-sort-type="${typeSort.RATING}" class="sort__button ${currentSortType === typeSort.RATING ? 'sort__button--active' : ''}">Sort by rating</a>
+        <a href="#" data-sort-type="${sortTypes.RATING}" class="sort__button ${currentSortType === sortTypes.RATING ? 'sort__button--active' : ''}">Sort by rating</a>
       </li>
-    </ul>`);
+    </ul>`;
 }
 
 // Создание класса.

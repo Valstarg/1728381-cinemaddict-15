@@ -4,11 +4,12 @@
 
 import AbstractView from './abstraction.js';
 
-// Отрисовка колличества фильмов(фильтры). Добавляем данные.
+// Отрисовка колличества фильмов(фильтры).
 
 function createItemCountTemplate(filter, currentFilterType = 'all') {
   const {name, count, type} = filter;
-  return `<a href="#watchlist" data-filter="${type}"  class="main-navigation__item ${type === currentFilterType ? 'main-navigation__item--active' : ''}">${name}${name !== 'All movies' ? `<span class="main-navigation__item-count">${count}</span>` : ''}</a>`;
+  return `<a href="#watchlist" data-filter="${type}"  class="main-navigation__item ${type === currentFilterType ? 'main-navigation__item--active' : ''}">${name}
+          ${name !== 'All movies' ? `<span class="main-navigation__item-count">${count}</span>` : ''}</a>`;
 }
 
 // Отрисовка навигации.
@@ -33,7 +34,7 @@ export default class NavigationComponent extends AbstractView {
     super();
     this._filters = filters;
     this._currentFilterType = currentFilterType;
-    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this._filterChangeHandler = this._filterChangeHandler.bind(this);
     this._pageStatsChangeHandler = this._pageStatsChangeHandler.bind(this);
   }
 
@@ -41,12 +42,12 @@ export default class NavigationComponent extends AbstractView {
     return createNavigationTemplate(this._filters, this._currentFilterType);
   }
 
-  _filterTypeChangeHandler(evt) {
+  _filterChangeHandler(evt) {
     if (evt.target.tagName !== 'A') {
       return;
     }
     evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.dataset.filter);
+    this._callback.filterChange(evt.target.dataset.filter);
   }
 
   _pageStatsChangeHandler(evt) {
@@ -54,9 +55,9 @@ export default class NavigationComponent extends AbstractView {
     this._callback.pageStatsChange(evt.target.dataset.filter);
   }
 
-  setFilterTypeChangeHandler(callback) {
-    this._callback.filterTypeChange = callback;
-    this.getElement().querySelector('.main-navigation__items').addEventListener('click', this._filterTypeChangeHandler);
+  setFilterChangeHandler(callback) {
+    this._callback.filterChange = callback;
+    this.getElement().querySelector('.main-navigation__items').addEventListener('click', this._filterChangeHandler);
   }
 
   setPageStatsChangeHandler(callback) {
