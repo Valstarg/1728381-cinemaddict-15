@@ -6,7 +6,7 @@ import FilmCardView from '../view/film-card.js';
 import PopupView from '../view/popup.js';
 import {render, renderPosition, replace, remove} from '../utils/render.js';
 import {updateType, userAction} from '../utils/util.js';
-import {api} from '../api';
+import {api} from '../api/api.js';
 
 //  Создание класса.
 

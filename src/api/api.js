@@ -2,7 +2,7 @@
 
 // Импорты.
 
-import FilmsModel from './model/mod-films.js';
+import FilmsModel from '../model/mod-films.js';
 
 // Переменные.
 
@@ -65,6 +65,15 @@ export default class Api {
       url: `comments/${id}`,
       method: request.DELETE,
     });
+  }
+
+  sync(data) {   //
+    return this._load({
+      url: 'movies/sync',
+      method: request.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    }).then(Api.toJSON);
   }
 
   _load({

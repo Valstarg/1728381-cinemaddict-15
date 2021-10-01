@@ -3,7 +3,7 @@
 // Импорты.
 
 import dayjs from 'dayjs';
-import {api} from '../api';
+import {api} from '../api/api.js';
 import FilmsSectionView from '../view/films-section.js';
 import FilmListMainView from '../view/films.js';
 import LoadView from '../view/load.js';
